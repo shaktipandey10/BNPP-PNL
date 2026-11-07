@@ -1,0 +1,24 @@
+# Build output
+**/bin/
+**/obj/
+**/node_modules/
+**/.angular/cache/
+**/dist/
+**/coverage/
+
+# Local database files
+*.db
+*.db-shm
+*.db-wal
+*.db.backup-*
+
+# Local environment files
+.env
+.env.*
+!.env.example
+
+# IDE and OS files
+.vs/
+.idea/
+.DS_Store
+Thumbs.db

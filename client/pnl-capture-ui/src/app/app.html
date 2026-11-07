@@ -1,0 +1,140 @@
+<main class="dashboard">
+  <header class="topbar">
+    <div>
+      <p class="eyebrow">Portfolio operations</p>
+      <h1>P&amp;L Capture</h1>
+      <p class="subtitle">Validated activity across batch files and live feeds</p>
+    </div>
+    <div class="live-indicator" [class.offline]="connectionState() !== 'Live'">
+      <span class="live-dot"></span>
+      {{ connectionState() }}
+    </div>
+  </header>
+
+  <section class="summary-grid" aria-label="P&L summary">
+    <article class="summary-card">
+      <span class="summary-label">Total records</span>
+      <strong>{{ summary().totalCount }}</strong>
+      <span class="summary-foot">Persisted records</span>
+    </article>
+    <article class="summary-card valid-card">
+      <span class="summary-label">Valid P&amp;L</span>
+      <strong>{{ summary().validCount }}</strong>
+      <span class="summary-foot">Non-zero amounts</span>
+    </article>
+    <article class="summary-card invalid-card">
+      <span class="summary-label">Invalid P&amp;L</span>
+      <strong>{{ summary().invalidCount }}</strong>
+      <span class="summary-foot">Zero amounts retained</span>
+    </article>
+  </section>
+
+  <section class="toolbar panel">
+    <div class="upload-area">
+      <label class="upload-button" for="pnl-file">
+        {{ isUploading() ? 'Uploading…' : 'Upload CSV / Excel' }}
+      </label>
+      <input id="pnl-file" type="file" accept=".csv,.xlsx" (change)="uploadFile($event)" [disabled]="isUploading()" />
+      <span class="hint">CSV or XLSX · file is validated before processing</span>
+    </div>
+    <div class="filters">
+      <label>
+        Source system
+        <input
+          type="text"
+          placeholder="All sources"
+          [ngModel]="sourceFilter()"
+          (ngModelChange)="sourceFilter.set($event)"
+          (keyup.enter)="refresh()"
+        />
+      </label>
+      <label>
+        Feed type
+        <select [ngModel]="feedFilter()" (ngModelChange)="feedFilter.set($event); refresh()">
+          <option value="">All feeds</option>
+          <option value="File">File</option>
+          <option value="Messaging">Messaging</option>
+        </select>
+      </label>
+      <button class="secondary-button" type="button" (click)="refresh()">Apply filters</button>
+    </div>
+  </section>
+
+  @if (uploadMessage()) {
+    <div class="notice" role="status">{{ uploadMessage() }}</div>
+  }
+
+  <section class="record-grid">
+    <article class="panel table-panel">
+      <div class="section-heading">
+        <div>
+          <span class="section-kicker">Validated</span>
+          <h2>Valid P&amp;L records</h2>
+        </div>
+        <span class="count-pill">{{ validRecords().length }} shown</span>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Source</th>
+              <th>Account</th>
+              <th class="numeric">P&amp;L amount</th>
+              <th>Feed</th>
+              <th>Processed (UTC)</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (record of validRecords(); track record.id) {
+              <tr>
+                <td>{{ record.sourceSystem }}</td>
+                <td>{{ record.accountNumber }}</td>
+                <td class="numeric positive">{{ record.pnlAmount | number: '1.2-4' }}</td>
+                <td><span class="feed-pill">{{ record.feedType }}</span></td>
+                <td>{{ record.processedAtUtc | date: 'short' : 'UTC' }}</td>
+              </tr>
+            } @empty {
+              <tr><td class="empty" colspan="5">No valid records match these filters.</td></tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </article>
+
+    <article class="panel table-panel">
+      <div class="section-heading">
+        <div>
+          <span class="section-kicker invalid-text">Business exceptions</span>
+          <h2>Invalid P&amp;L records</h2>
+        </div>
+        <span class="count-pill">{{ invalidRecords().length }} shown</span>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Source</th>
+              <th>Account</th>
+              <th class="numeric">P&amp;L amount</th>
+              <th>Reason</th>
+              <th>Feed</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (record of invalidRecords(); track record.id) {
+              <tr>
+                <td>{{ record.sourceSystem }}</td>
+                <td>{{ record.accountNumber }}</td>
+                <td class="numeric invalid-value">{{ record.pnlAmount | number: '1.2-4' }}</td>
+                <td>{{ record.validationReason }}</td>
+                <td><span class="feed-pill">{{ record.feedType }}</span></td>
+              </tr>
+            } @empty {
+              <tr><td class="empty" colspan="5">No invalid records match these filters.</td></tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </article>
+  </section>
+</main>

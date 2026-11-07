@@ -1,0 +1,10 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background: #f5f8fa;
+  color: #243b53;
+  font-family: Inter, "Segoe UI", Arial, sans-serif;
+  margin: 0;
+}

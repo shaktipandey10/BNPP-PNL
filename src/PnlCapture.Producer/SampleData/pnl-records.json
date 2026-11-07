@@ -1,0 +1,26 @@
+[
+  {
+    "messageId": "sample-message-001",
+    "sourceSystem": "Bloomberg",
+    "accountNumber": 1001001,
+    "pnlAmount": 1250.75
+  },
+  {
+    "messageId": "sample-message-002",
+    "sourceSystem": "Reuters",
+    "accountNumber": 2002002,
+    "pnlAmount": -375.25
+  },
+  {
+    "messageId": "sample-message-003",
+    "sourceSystem": "InternalTradingSystem",
+    "accountNumber": 3003003,
+    "pnlAmount": 0
+  },
+  {
+    "messageId": "sample-message-004",
+    "sourceSystem": "Bloomberg",
+    "accountNumber": 4004004,
+    "pnlAmount": 89.99
+  }
+]
